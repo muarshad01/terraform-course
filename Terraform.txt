@@ -1,0 +1,29 @@
+Terraform 
+
+Lecture 5: Terraform Installation
+---------------------------------
+https://www.terraform.io/
+
+$ cd ~ # /Users/umer
+$ mkdir terraform
+$ cd terraform 
+$ mv ~/Desktop/Terraform/terraform_0.12.26_darwin_amd64.zip .
+$ unzip terraform_0.12.26_darwin_amd64.zip
+
+$ export PATH=/Users/umer/terraform:$PATH
+
+$ terraform
+
+
+Lecture 7: Terraform Installation Using Vagrant
+-----------------------------------------------
+
+https://www.virtualbox.org/ # download VirtualBox
+
+https://www.vagrantup.com/ # download vagrantup
+
+$ git clone https://github.com/wardviaene/devops-box
+
+$ cd devops-box/
+$ vagrant up # Vagrant Ubuntu images is installed and terraform is installed on it
+$ vagrant ssh # vagrant@ubuntu-bionic:~$
