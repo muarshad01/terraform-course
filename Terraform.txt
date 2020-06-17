@@ -1,29 +1,186 @@
 Terraform 
 
+---------------------------------
 Lecture 5: Terraform Installation
 ---------------------------------
-https://www.terraform.io/
+
+https://www.terraform.io/ # download terraform
 
 $ cd ~ # /Users/umer
 $ mkdir terraform
 $ cd terraform 
-$ mv ~/Desktop/Terraform/terraform_0.12.26_darwin_amd64.zip .
+$ mv ~/Downloads/Terraform/terraform_0.12.26_darwin_amd64.zip .
 $ unzip terraform_0.12.26_darwin_amd64.zip
 
 $ export PATH=/Users/umer/terraform:$PATH
-
 $ terraform
 
-
+-----------------------------------------------
 Lecture 7: Terraform Installation Using Vagrant
 -----------------------------------------------
 
 https://www.virtualbox.org/ # download VirtualBox
-
 https://www.vagrantup.com/ # download vagrantup
 
 $ git clone https://github.com/wardviaene/devops-box
 
-$ cd devops-box/
+$ cd devops-box/scripts
 $ vagrant up # Vagrant Ubuntu images is installed and terraform is installed on it
 $ vagrant ssh # vagrant@ubuntu-bionic:~$
+$ terraform
+
+--------------------------------------
+Lecture 8: Understanding terraform HCL
+--------------------------------------
+
+$ mkdir terraform-test
+$ cd terraform-test/
+$ touch main.tf 
+
+---
+variable "myvar" {                  # create variable 'myvar'
+    type = "string"                 # properties
+    default = "hello terraform"
+}
+---
+
+$ terraform version
+$ terraform consol
+> var.myvar # hello terraform
+> "${var.myvar}"
+
+---
+variable "mymap" {
+    type = map(string)          
+    mykey = "my value"
+}
+---
+
+$ terraform consol
+> var.myvar 
+> var.mymap["mykey"]
+> my value
+>"${var.mymap["mykey"]}"
+
+variable "mylist" {
+    type = list
+    default = [1, 2, 3]
+}
+
+> var.mylist
+> [1, 2, 3] 
+> element(var.mylist, 1)
+> 2
+> element(var.mylist, 0)
+> 1
+> exit
+
+$ touch resource.tf 
+
+---
+provider "aws" {
+
+}
+
+variable "AWS_REGION" {
+    type = string
+}
+
+variable "AMIS" {
+    type = map(string)
+    default = {
+        eu-west-1 = "my ami"
+    }
+}
+
+resource "aws_instance" "example" {
+    ami = var.AMIS[var.AWS_REGION]
+    instance_type = "t2.micro"
+}
+---
+
+$ touch terraform.tfvars
+
+---
+AWS_REGION="eu-west-1"
+---
+
+$ terraform init 
+
+-----------------------------------------------
+Lecture 9: First steps in terraform - AWS Setup
+-----------------------------------------------
+
+---------------------------------------------------------------
+Lecture 10: Firsts steps in terraform - Spinning up an instance 
+---------------------------------------------------------------
+Using vagrant book
+
+
+[vagrant@ubuntu-bionic:$ terraform 
+
+[vagrant@ubuntu-bionic:$ git clone https://github.com/wardviaene/terraform-course 
+[vagrant@ubuntu-bionic:$ cd ~/terraform-course/first-steps 
+[vagrant@ubuntu-bionic:$ cat instance.tf 
+
+provider "aws" {
+  access_key = "ACCESS_KEY_HERE"
+  secret_key = "SECRET_KEY_HERE"
+  region     = "us-west-1"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0d729a60"
+  instance_type = "t2.micro"
+}
+
+https://cloud-images.ubuntu.com/locator/ec2
+
+[vagrant@ubuntu-bionic:$ terraform init 
+[vagrant@ubuntu-bionic:$ terraform apply 
+> Apply complete! Resources: 1 added, 0 changed, 0 destroyed
+
+[vagrant@ubuntu-bionic:$ terraform destroy # destroy the infrastructure
+>Destroy complete! Resources: 1 destroyed.
+
+[vagrant@ubuntu-bionic:$ terraform plan 
+[vagrant@ubuntu-bionic:$ terraform plan -out out.terraform 
+[vagrant@ubuntu-bionic:$ terraform apply out.terraform 
+[vagrant@ubuntu-bionic:$ terraform show 
+
+----------------------------------------------
+Lecture 11: First steps in terrafrom - summary
+----------------------------------------------
+[vagrant@ubuntu-bionic:$ terraform plan -out changes.terraform  
+[vagrant@ubuntu-bionic:$ terraform apply changes.terraform
+[vagrant@ubuntu-bionic:$ terraform destroy # destroy the infrastructure
+
+------------------------------------
+Lecture 12: Terraform Variable Types
+------------------------------------
+- String 
+- Number 
+- Bool 
+
+variable "a-string" {
+    type = string
+}
+variable "this-is-a-number" {
+    type = number 
+}
+variable "true-of-false" {
+    type = bool 
+}
+
+Terraform's complex Types
+-------------------------
+- List(type): [0,1,5,2] - A list is alwsy ordered, it'll always return 0,1,5,2 
+              and not 5,1,2,0
+- Set(type): A "set" is like a list, but it doesn't keep the "order" you put it in, 
+             and can only contain unique values. List [5,1,1,2] --> set [1,2,5] (terrform sorts the output)
+- Map(type): {"key"="value"}
+- Object({<ATTR NAME>=<TYPE>, ...})
+- Tuple([<TYPE>, ...])
+
+- Object is like a Map 
+- An Tuple is like a list. E.g., [0, "string", false], a list with different types 
