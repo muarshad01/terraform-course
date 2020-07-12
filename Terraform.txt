@@ -23,15 +23,14 @@ https://www.virtualbox.org/ # download VirtualBox
 https://www.vagrantup.com/ # download vagrantup
 
 $ git clone https://github.com/wardviaene/devops-box
-
 $ cd devops-box/scripts
 $ vagrant up # Vagrant Ubuntu images is installed and terraform is installed on it
 $ vagrant ssh # vagrant@ubuntu-bionic:~$
 $ terraform
 
---------------------------------------
-Lecture 8: Understanding terraform HCL
---------------------------------------
+-------------------------------------------------------------------------
+Lecture 8: Understanding terraform HCL (HashiCorp Configuration Language)
+-------------------------------------------------------------------------
 
 $ mkdir terraform-test
 $ cd terraform-test/
@@ -114,11 +113,8 @@ Lecture 9: First steps in terraform - AWS Setup
 ---------------------------------------------------------------
 Lecture 10: Firsts steps in terraform - Spinning up an instance 
 ---------------------------------------------------------------
-Using vagrant book
-
 
 [vagrant@ubuntu-bionic:$ terraform 
-
 [vagrant@ubuntu-bionic:$ git clone https://github.com/wardviaene/terraform-course 
 [vagrant@ubuntu-bionic:$ cd ~/terraform-course/first-steps 
 [vagrant@ubuntu-bionic:$ cat instance.tf 
@@ -130,18 +126,29 @@ provider "aws" {
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-0d729a60"
+  ami           = "ami-03f24a1c3ecf7122a"
   instance_type = "t2.micro"
 }
 
-https://cloud-images.ubuntu.com/locator/ec2
+https://cloud-images.ubuntu.com/locator/ec2  (Search: us-west-1 bionic)
 
 [vagrant@ubuntu-bionic:$ terraform init 
-[vagrant@ubuntu-bionic:$ terraform apply 
-> Apply complete! Resources: 1 added, 0 changed, 0 destroyed
+[vagrant@ubuntu-bionic:$ terraform apply
+> Enter a value: yes
+...
+aws_instance.example: Creating...
+aws_instance.example: Still creating... [10s elapsed]
+aws_instance.example: Creation complete after 19s [id=i-0e07e1d4d3d37829d]
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 [vagrant@ubuntu-bionic:$ terraform destroy # destroy the infrastructure
->Destroy complete! Resources: 1 destroyed.
+> Enter a value: yes
+aws_instance.example: Destroying... [id=i-0e07e1d4d3d37829d]
+aws_instance.example: Still destroying... [id=i-0e07e1d4d3d37829d, 10s elapsed]
+aws_instance.example: Still destroying... [id=i-0e07e1d4d3d37829d, 20s elapsed]
+aws_instance.example: Still destroying... [id=i-0e07e1d4d3d37829d, 30s elapsed]
+aws_instance.example: Destruction complete after 31s
+Destroy complete! Resources: 1 destroyed.
 
 [vagrant@ubuntu-bionic:$ terraform plan 
 [vagrant@ubuntu-bionic:$ terraform plan -out out.terraform 
@@ -151,8 +158,8 @@ https://cloud-images.ubuntu.com/locator/ec2
 ----------------------------------------------
 Lecture 11: First steps in terrafrom - summary
 ----------------------------------------------
-[vagrant@ubuntu-bionic:$ terraform plan -out changes.terraform  
-[vagrant@ubuntu-bionic:$ terraform apply changes.terraform
+[vagrant@ubuntu-bionic:$ terraform plan -out out.terraform  
+[vagrant@ubuntu-bionic:$ terraform apply out.terraform
 [vagrant@ubuntu-bionic:$ terraform destroy # destroy the infrastructure
 
 ------------------------------------
@@ -174,8 +181,7 @@ variable "true-of-false" {
 
 Terraform's complex Types
 -------------------------
-- List(type): [0,1,5,2] - A list is alwsy ordered, it'll always return 0,1,5,2 
-              and not 5,1,2,0
+- List(type): [0,1,5,2] - A list is always ordered, it'll always return 0,1,5,2 
 - Set(type): A "set" is like a list, but it doesn't keep the "order" you put it in, 
              and can only contain unique values. List [5,1,1,2] --> set [1,2,5] (terrform sorts the output)
 - Map(type): {"key"="value"}
@@ -190,48 +196,38 @@ Lecture 13: Variables
 ---------------------
 
 $ touch vars.tf 
-
----
+---------------
 variable "AWS_ACCESS_KEY" {}
 variable "AWS_SECRET_KEY" {}
 
 variable "AWS_REGION" {
-    default = "eu-west-1"
+    default = "us-west-1"
 }
 
 variable "AMIS" {
     type = "map"
     default = {
-        us-east-1 = "ami-13be557e"
-        us-west-2 = "ami-93fe937e"
-        eu-east-1 = "ami-01be537e"
+        us-west-1 = "ami-03f24a1c3ecf7122"
     }
 }
----
 
-$ terraform.tfvars 
-
+$ terraform.tfvars  # These variables aren't shows up in 'git'
+------------------
 AWS_ACCESS_KEY = ""
 AWS_SECRET_KEY = ""
-AWS_REGION = ""
 
 $ touch provider.tf 
-
+-------------------
 provider "aws" {
-    access_key = "${var.AWS_ACCESS_KEY}"
-    secret_key = "${var.AWS_SECRET_KEY}"
-    region = "${var.AWS_REGION}"
+    access_key = var.AWS_ACCESS_KEY
+    secret_key = var.AWS_SECRET_KEY
+    region = var.AWS_REGION
 }
 
-$ touch terraform.tfvars
-
-AWS_ACCESS_KEY = "..."
-AWS_ACCESS_KEY = "..."
-
 $ touch instance.tf 
-
+-------------------
 resource "aws_instance" "example" {
-    ami = "${lookup(var.AMIS, var.AWS_REGION)}"
+    ami = var.AMIS[var.AWS_REGION]
     instance_type = "t2.micro"
 }
 
@@ -445,3 +441,13 @@ Lecture 28. Terraform Commands Overview
 ------------------------------------
 Lecture 29. Demo: Terraform Commands
 ------------------------------------
+
+
+
+
+numsius = [100 200 300 400 500 600 700 800 900 1000];
+disttype = ’gamma’;
+shape = 2;
+scale = 1;
+dtplayoutdeadline = 0.1;
+err = false;errstr = ”;
