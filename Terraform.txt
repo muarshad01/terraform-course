@@ -270,41 +270,79 @@ provisioner "file" {
 Lecture 16: Demo: Software provisioning
 ---------------------------------------
 
-https://www.whatsmyip.org/
+$ vim terraform.tfvars
+----------------------
+AWS_ACCESS_KEY = ""
+AWS_SECRET_KEY = ""
+
+https://www.whatsmyip.org/ # Determine the IP address of your local machine
 
 $ ssh-key -f mykey
 
-[vagrant@ubuntu-bionic:~/terraform-course/demo-2$ touch instance.tf 
-
+$ vim instance.tf 
+-----------------
 resource "aws_key_pair" "mykey" {
-  key_name   = "mykey"
-  public_key = file(var.PATH_TO_PUBLIC_KEY)
+    key_name   = "mykey"
+    public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
 
 resource "aws_instance" "example" {
-  ami           = var.AMIS[var.AWS_REGION]
-  instance_type = "t2.micro"
-  key_name      = aws_key_pair.mykey.key_name
+    ami = var.AMIS[var.AWS_REGION]
+    instance_type = "t2.micro"
+    key_name = aws_key_pair.mykey.key_name
 
-  provisioner "file" {
-    source      = "script.sh"
-    destination = "/tmp/script.sh"
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/script.sh",
-      "sudo sed -i -e 's/\r$//' /tmp/script.sh",  # Remove the spurious CR characters.
-      "sudo /tmp/script.sh",
-    ]
-  }
-  connection {
-    host        = coalesce(self.public_ip, self.private_ip)
-    type        = "ssh"
-    user        = var.INSTANCE_USERNAME
-    private_key = file(var.PATH_TO_PRIVATE_KEY)
-  }
+    provisioner "file" {
+        source = "script.sh"
+        destination = "/tmp/script.sh"
+    }
+  
+    provisioner "remote-exec" {
+        inline = [
+            "chmod +x /tmp/script.sh",
+            "sudo /tmp/script.sh",
+        ]
+    }
+
+    connection {
+        host = coalesce(self.public_ip, self.private_ip)
+        type = "ssh"
+        user = var.INSTANCE_USERNAME
+        private_key = file(var.PATH_TO_PRIVATE_KEY)
+    }
 }
 
+$ vim vars.tf
+-------------
+variable "AWS_ACCESS_KEY" {}
+
+variable "AWS_SECRET_KEY" {}
+
+variable "AWS_REGION" {
+    default = "us-west-1"
+}
+
+variable "AMIS" {
+    type = map(string)
+    default = {
+        us-wast-1 = "ami-0ccd40218fe8440fc"
+    }
+}
+
+variable "PATH_TO_PRIVATE_KEY" {
+    default = "mykey"
+}
+
+variable "PATH_TO_PUBLIC_KEY" {
+    default = "mykey.pub"
+}
+
+variable "INSTANCE_USERNAME" {
+    default = "ubuntu"
+}
+
+$ terrafrom init
+$ terrafrom apply
+$ terrafrom deploy
 
 ---------------------------------------------
 Lecture 17: Demo: Windows Server Provisioning
