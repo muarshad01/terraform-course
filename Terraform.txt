@@ -514,7 +514,7 @@ Lecture 34. Launching EC2 instances in the VPC
 ----------------------------------------------
 
 ------------------------------------------------
-Lecture 34. Demo: Launching instances in the VPC
+Lecture 35. Demo: Launching instances in the VPC
 ------------------------------------------------
 
 $ provider.tf
@@ -557,3 +557,46 @@ $ terraform apply
 $ terraform destroy
 
 https://cloud-images.ubuntu.com/locator/ec2/
+
+-----------------------
+Lecture 36. EBS Volumes
+-----------------------
+
+-----------------------------
+Lecture 37. Demo: EBS Volumes
+-----------------------------
+
+
+
+
+
+$ terraform init
+$ terraform plan
+$ terraform apply
+$ terraform destroy
+
+--------------------
+Lecture 38. Userdata
+--------------------
+
+--------------------------
+Lecture 39. Demo: Userdata
+--------------------------
+
+$ terraform apply
+$ vim terrafom.tfstate # "public_ip": "18.216.91.212"
+$ ssh -i mykey ubuntu@18.216.91.212
+$ sudo -i
+$ docker -h # docker is installed
+$ ls /dev/data/volume1 # exists
+$ cat /var/log/cloud-init-output.log
+$ pvdisplay
+$ lvdisplay
+
+-----------------------------------------
+Lecture 40. Static IPs, EPIs, and Route53
+-----------------------------------------
+
+-------------------------
+Lecture 41. Demo: Route53
+-------------------------
