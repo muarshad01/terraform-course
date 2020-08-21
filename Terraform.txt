@@ -277,7 +277,7 @@ AWS_SECRET_KEY = ""
 
 https://www.whatsmyip.org/ # Determine the IP address of your local machine
 
-$ ssh-key -f mykey
+$ ssh-keygen -f mykey
 
 $ vim instance.tf 
 -----------------
@@ -343,6 +343,7 @@ variable "INSTANCE_USERNAME" {
 $ terrafrom init
 $ terrafrom apply
 $ terrafrom deploy
+$ terraform destroy
 
 ---------------------------------------------
 Lecture 17: Demo: Windows Server Provisioning
@@ -352,7 +353,7 @@ Lecture 17: Demo: Windows Server Provisioning
 Lecture 18: Outputting attributes
 ---------------------------------
 resource "aws_instance" "example" {
-    ami = "${lookup(var.AMIS, var.AWS_REGION)}"
+    ami = var.AMIS[var.AWS_REGION]
     instance_type = "t2.micro"
 }
 
@@ -374,13 +375,15 @@ resource "aws_instance" "example" {
 
 vagrant@ubuntu-bionic:~/terraform-course/demo-3$ terraform init
 vagrant@ubuntu-bionic:~/terraform-course/demo-3$ terraform apply
+
 ---------------------------------------
 Lecture 19: Demo: Outputting attributes
 ---------------------------------------
+$ vagrant up
+$ vagrant ssh
 
--- terraform.tfstate 
--- terrafrom.tfstate.backup
-
+$ terraform init
+$ terraform plan
 $ terrafrom apply # create a new terraform.tfstate & backup 
 
 ------------------------
@@ -481,11 +484,76 @@ Lecture 29. Demo: Terraform Commands
 ------------------------------------
 
 
+--------------------------------
+Lecture 30. Introduction to VPCs
+--------------------------------
+
+------------------------------------------
+Lecture 31. Introduction to VPCs - Part II
+------------------------------------------
+
+------------------------------------------------
+Lecture 32. Introduction to terraform - Part III
+------------------------------------------------
+
+-------------------------------
+Lecture 33. Demo: VPCs and NAT
+-------------------------------
 
 
-numsius = [100 200 300 400 500 600 700 800 900 1000];
-disttype = ’gamma’;
-shape = 2;
-scale = 1;
-dtplayoutdeadline = 0.1;
-err = false;errstr = ”;
+
+$ ssh-keygen -f mykey
+
+$ terraform init
+$ terrform deploy
+$ terraform apply
+$ terraform destroy
+
+----------------------------------------------
+Lecture 34. Launching EC2 instances in the VPC
+----------------------------------------------
+
+------------------------------------------------
+Lecture 34. Demo: Launching instances in the VPC
+------------------------------------------------
+
+$ provider.tf
+-------------
+provider "aws" {
+        access_key = var.AWS_ACCESS_KEY
+        secret_key = var.AWS_SECRET_KEY
+        region = var.AWS_REGION
+}
+
+$ vim terraform.tfvars
+----------------------
+AWS_ACCESS_KEY = "..."
+AWS_SECRET_KEY = "..."
+
+$ vim vars.tf
+----------------------------
+variable "AWS_ACCESS_KEY" {}
+  
+variable "AWS_SECRET_KEY" {}
+
+variable "AWS_REGION" {
+        default = "us-east-2"
+}
+
+variable "PATH_TO_PRIVATE_KEY" {
+        default = "mykey"
+}
+
+variable "PATH_TO_PUBLIC_KEY" {
+        default = "mykey.pub"
+}
+--------------------------------
+
+$ ssh-keygen -f mykey
+
+$ terraform init
+$ terrform deploy
+$ terraform apply
+$ terraform destroy
+
+https://cloud-images.ubuntu.com/locator/ec2/
