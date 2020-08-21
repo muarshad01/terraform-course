@@ -27,4 +27,3 @@ data "template_cloudinit_config" "cloudinit-example" {
     content      = data.template_file.shell-script.rendered
   }
 }
-
