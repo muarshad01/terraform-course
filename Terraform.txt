@@ -600,3 +600,6 @@ Lecture 40. Static IPs, EPIs, and Route53
 -------------------------
 Lecture 41. Demo: Route53
 -------------------------
+
+$ host server1.newtech.academy ns-1018.awsdns-63.net
+$ host -t MX newtech.academy ns-1018.awsdns-63.net
